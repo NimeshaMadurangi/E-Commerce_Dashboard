@@ -66,6 +66,12 @@
   }
 }
 
+.required::after {
+  content: " *";
+  font-family: sans-serif;
+  color: red;
+}
+
 .success-message {
   margin-top: 1rem;
   color: green;

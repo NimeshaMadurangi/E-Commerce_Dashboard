@@ -54,7 +54,9 @@ function AddProductModal({ isOpen, onClose, onAddProduct }) {
               >
                 {({ input, meta }) => (
                   <div className="field-group">
-                    <label>Product Name*</label>
+                    <label htmlFor="name" className="required">
+                      Product Name
+                    </label>
                     <input {...input} type="text" placeholder="Product Name" />
                     {meta.touched && meta.error && (
                       <span className="error">{meta.error}</span>
@@ -69,7 +71,9 @@ function AddProductModal({ isOpen, onClose, onAddProduct }) {
               >
                 {({ input, meta }) => (
                   <div className="field-group">
-                    <label>Price*</label>
+                    <label htmlFor="price" className="required">
+                      Price
+                    </label>
                     <input {...input} type="text" placeholder="Price" />
                     {meta.touched && meta.error && (
                       <span className="error">{meta.error}</span>
@@ -85,7 +89,7 @@ function AddProductModal({ isOpen, onClose, onAddProduct }) {
               >
                 {({ input }) => (
                   <div className="field-group">
-                    <label>Category</label>
+                    <label htmlFor="category">Category</label>
                     <select {...input}>
                       {categories.map(cat => (
                         <option key={cat} value={cat}>
@@ -103,7 +107,9 @@ function AddProductModal({ isOpen, onClose, onAddProduct }) {
               >
                 {({ input, meta }) => (
                   <div className="field-group">
-                    <label>Stock Quantity*</label>
+                    <label htmlFor="quantity" className="required">
+                      Stock Quantity
+                    </label>
                     <input
                       {...input}
                       type="number"
@@ -120,7 +126,7 @@ function AddProductModal({ isOpen, onClose, onAddProduct }) {
               <Field name="description" validate={maxChars(200)}>
                 {({ input, meta }) => (
                   <div className="field-group">
-                    <label>Description (optional)</label>
+                    <label htmlFor="description">Description (optional)</label>
                     <textarea
                       {...input}
                       maxLength={200}
@@ -139,7 +145,7 @@ function AddProductModal({ isOpen, onClose, onAddProduct }) {
               <Field name="imageUrl" validate={url}>
                 {({ input, meta }) => (
                   <div className="field-group">
-                    <label>Image URL (optional)</label>
+                    <label htmlFor="imgUrl">Image URL (optional)</label>
                     <input {...input} type="text" placeholder="Image URL" />
                     {meta.touched && meta.error && (
                       <span className="error">{meta.error}</span>
@@ -150,7 +156,7 @@ function AddProductModal({ isOpen, onClose, onAddProduct }) {
 
               <div className="form-actions">
                 <button type="submit" disabled={submitting}>
-                  Add Product
+                  Add
                 </button>
                 <button
                   type="button"
