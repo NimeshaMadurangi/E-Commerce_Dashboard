@@ -33,7 +33,7 @@ describe("AddProductModal - Product Form", () => {
     const submitButton = screen.getByRole("button", { name: /add/i })
     await userEvent.click(submitButton)
 
-    expect(await screen.findAllByText(/Required/)).toHaveLength(2) // name and category
+    expect(await screen.findAllByText(/Required/)).toHaveLength(2)
   })
 
   test("prevents submission with invalid numeric values", async () => {

@@ -1,11 +1,9 @@
-/* Reset base styles */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* Set up global typography and layout */
 body {
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   background-color: #f7f9fc;
@@ -15,14 +13,12 @@ body {
   min-height: 100vh;
 }
 
-/* App wrapper */
 .App {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
 }
 
-/* Utility for spacing */
 .container {
   width: 100%;
   max-width: 1200px;
@@ -30,7 +26,6 @@ body {
   // padding: 1rem;
 }
 
-/* Product list grid layout */
 .product-list {
   padding: 2rem 2rem;
   display: grid;

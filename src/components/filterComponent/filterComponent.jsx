@@ -1,4 +1,3 @@
-// src/components/filterComponent/filterComponent.jsx
 import "./filterComponent.scss"
 import { FiFilter } from "react-icons/fi"
 

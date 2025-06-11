@@ -3,17 +3,8 @@ import { BiEdit } from "react-icons/bi"
 import { MdOutlineDeleteOutline } from "react-icons/md"
 
 function ProductCard({ product, onDelete, onEdit }) {
-  const {
-    id,
-    name, // use `name` instead of `productName`
-    price,
-    category,
-    quantity, // using quantity instead of stockQuantity
-    description,
-    imageUrl,
-  } = product
+  const { id, name, price, category, quantity, description, imageUrl } = product
 
-  // Determine stock status based on quantity
   let stockStatus = "out-of-stock"
   if (quantity > 0 && quantity < 5) stockStatus = "low-stock"
   else if (quantity >= 5) stockStatus = "in-stock"

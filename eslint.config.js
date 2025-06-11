@@ -6,7 +6,6 @@ import reactRefresh from "eslint-plugin-react-refresh"
 export default [
   { ignores: ["dist"] },
 
-  // General JS/JSX files
   {
     files: ["**/*.{js,jsx}"],
     languageOptions: {
@@ -33,7 +32,6 @@ export default [
     },
   },
 
-  // Vitest test files - enable vitest globals
   {
     files: ["**/*.{test,spec}.{js,jsx}"],
     languageOptions: {

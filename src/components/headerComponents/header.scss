@@ -1,5 +1,5 @@
 .header-container {
-  background-color: #fff0f3;
+  background-color: #c7d4f5;
   padding: 1.5rem 2rem;
   border-bottom: 1px solid #e0e0e0;
   display: flex;
@@ -37,12 +37,12 @@
 }
 
 .btn {
-  background-color: #c9184a;
+  background-color: #1853c9;
   color: white;
   border: none;
   padding: 0.55rem 1.1rem;
   border-radius: 8px;
-  border-color: 2px #c9184a;
+  border-color: 2px #183bc9;
   font-size: 0.95rem;
   display: flex;
   align-items: center;
@@ -52,7 +52,7 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
 
   &:hover {
-    background-color: #ff7096;
+    background-color: #70a4ff;
   }
 
   svg {

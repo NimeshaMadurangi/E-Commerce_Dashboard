@@ -1,4 +1,3 @@
-// src/pages/AddProductPage.jsx
 import "./AddProductPage.scss"
 import { useState } from "react"
 import Header from "../../components/headerComponents/header"

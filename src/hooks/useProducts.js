@@ -1,9 +1,7 @@
-// src/hooks/useProducts.js
 import { useState, useEffect } from "react"
 
 function useProducts() {
   const [products, setProducts] = useState(() => {
-    // Optionally initialize from localStorage or empty
     const stored = localStorage.getItem("products")
     return stored ? JSON.parse(stored) : []
   })
