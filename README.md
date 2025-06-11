@@ -146,4 +146,4 @@ src/
 
 ## Demo Video
 
-https://drive.google.com/drive/folders/12nXF3Nq7bQhzVZymk-oOqPjiL9NLM_tb?usp=drive_link
+https://drive.google.com/drive/folders/12nXF3Nq7bQhzVZymk-oOqPjiL9NLM_tb?usp=sharing
