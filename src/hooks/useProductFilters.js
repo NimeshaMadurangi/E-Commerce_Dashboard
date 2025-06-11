@@ -1,10 +1,11 @@
+// useProductFilters.js
 import { useState } from "react"
 
-export function useProductFilters(initialFilters = {}) {
+function useProductFilters(initialFilters = {}) {
   const [filters, setFilters] = useState({
     search: "",
     category: "",
-    status: "",
+    stockStatus: "", // fixed key from status -> stockStatus to match usage
     minPrice: "",
     maxPrice: "",
     ...initialFilters,
@@ -19,3 +20,5 @@ export function useProductFilters(initialFilters = {}) {
     updateFilter,
   }
 }
+
+export default useProductFilters
