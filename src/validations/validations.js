@@ -28,3 +28,11 @@ export const url = value => {
     return "Invalid URL"
   }
 }
+
+// Custom quantity validator: required and > 0 integer
+export const validateQuantity = value => {
+  if (!value) return "Required"
+  if (!/^\d+$/.test(value)) return "Quantity must be an integer"
+  if (Number(value) < -1) return "Quantity must be greater than 0"
+  return undefined
+}

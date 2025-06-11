@@ -1,3 +1,4 @@
+// src/pages/AddProductPage.jsx
 import "./AddProductPage.scss"
 import { useState } from "react"
 import Header from "../../components/headerComponents/header"
@@ -7,18 +8,17 @@ import ProductCard from "../../components/productCardComponent/productCard"
 import useProducts from "../../hooks/useProducts"
 
 function AddProductPage() {
-  const { products, addProduct, updateProduct, deleteProduct } = useProducts()
-
+  const { products, deleteProduct } = useProducts()
   const [showModal, setShowModal] = useState(false)
   const [editingProduct, setEditingProduct] = useState(null)
 
-  // Open modal in "Add" mode
+  // Open modal in Add mode
   const handleOpenAddModal = () => {
     setEditingProduct(null)
     setShowModal(true)
   }
 
-  // Open modal in "Edit" mode
+  // Open modal in Edit mode
   const handleEditProduct = product => {
     setEditingProduct(product)
     setShowModal(true)
@@ -30,10 +30,7 @@ function AddProductPage() {
       "Are you sure you want to delete this product?"
     )
     if (confirmed) {
-      const productToDelete = products.find(p => p.id === id)
-      if (productToDelete) {
-        deleteProduct(productToDelete)
-      }
+      deleteProduct(id)
     }
   }
 
@@ -44,8 +41,6 @@ function AddProductPage() {
       <AddProductModal
         isOpen={showModal}
         onClose={() => setShowModal(false)}
-        onAddProduct={addProduct}
-        onUpdateProduct={updateProduct}
         initialValues={editingProduct}
       />
 

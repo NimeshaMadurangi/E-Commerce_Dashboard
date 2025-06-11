@@ -1,9 +1,13 @@
-import { StrictMode } from "react"
-import { createRoot } from "react-dom/client"
-import App from "./App.jsx"
+// main.jsx or App.jsx
+import React from "react"
+import ReactDOM from "react-dom/client"
+import App from "./App"
+import { ProductProvider } from "./context/ProductContext"
 
-createRoot(document.getElementById("root")).render(
-  <StrictMode>
-    <App />
-  </StrictMode>
+ReactDOM.createRoot(document.getElementById("root")).render(
+  <React.StrictMode>
+    <ProductProvider>
+      <App />
+    </ProductProvider>
+  </React.StrictMode>
 )

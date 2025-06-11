@@ -5,54 +5,58 @@ import { MdOutlineDeleteOutline } from "react-icons/md"
 function ProductCard({ product, onDelete, onEdit }) {
   const {
     id,
-    productName,
+    name, // use `name` instead of `productName`
     price,
     category,
-    stockQuantity,
+    quantity, // using quantity instead of stockQuantity
     description,
     imageUrl,
-    stockStatus,
   } = product
+
+  // Determine stock status based on quantity
+  let stockStatus = "out-of-stock"
+  if (quantity > 0 && quantity < 5) stockStatus = "low-stock"
+  else if (quantity >= 5) stockStatus = "in-stock"
 
   return (
     <div className="product-card">
       <img
         src={imageUrl || "https://via.placeholder.com/250"}
-        alt={productName}
+        alt={name}
         className="product-img"
       />
       <div className="product-details">
         <div className="product-header">
-          <h4>{productName}</h4>
+          <h4>{name}</h4>
           <span className="price">${price}</span>
         </div>
 
         <div className="product-tags">
           <span className="category">{category || "-"}</span>
-          <span
-            className={`status-tag ${
-              stockStatus === "in-stock" ? "in-stock" : "out-of-stock"
-            }`}
-          >
-            {stockStatus === "in-stock" ? "In Stock" : "Out of Stock"}
+          <span className={`status-tag ${stockStatus}`}>
+            {stockStatus === "in-stock"
+              ? "In Stock"
+              : stockStatus === "low-stock"
+              ? "Low Stock"
+              : "Out of Stock"}
           </span>
         </div>
 
         <p className="description">{description || "-"}</p>
-        <p className="stock">Stock: {stockQuantity ?? 0} Units</p>
+        <p className="stock">Stock: {quantity ?? 0} Units</p>
 
         <div className="product-actions">
           <button
             className="btn-edit"
-            onClick={() => onEdit(product)} // pass full product
-            aria-label={`Edit ${productName}`}
+            onClick={() => onEdit(product)}
+            aria-label={`Edit ${name}`}
           >
             <BiEdit />
           </button>
           <button
             className="btn-delete"
-            onClick={() => onDelete(id)} // pass id only
-            aria-label={`Delete ${productName}`}
+            onClick={() => onDelete(id)}
+            aria-label={`Delete ${name}`}
           >
             <MdOutlineDeleteOutline />
           </button>

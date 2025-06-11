@@ -60,14 +60,21 @@
         font-size: 0.75rem;
         padding: 2px 8px;
         border-radius: 12px;
-        color: #fff;
+        font-weight: 600;
 
         &.in-stock {
-          background: #28a745;
+          background: #d4edda;
+          color: #155724;
+        }
+
+        &.low-stock {
+          background: #fff3cd;
+          color: #856404;
         }
 
         &.out-of-stock {
-          background: #dc3545;
+          background: #f8d7da;
+          color: #721c24;
         }
       }
     }

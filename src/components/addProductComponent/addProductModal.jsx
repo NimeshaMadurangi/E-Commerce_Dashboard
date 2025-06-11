@@ -1,33 +1,54 @@
+// src/components/addProductComponent/addProductModal.jsx
+import "./addProductModal.scss"
 import { Form, Field } from "react-final-form"
 import useProducts from "../../hooks/useProducts"
+import {
+  required,
+  minLength,
+  maxLength,
+  positiveNumber,
+  url,
+  validateQuantity,
+} from "../../validations/validations"
+import { useState } from "react"
 
 function AddProductModal({ isOpen, onClose, initialValues }) {
   const { addProduct, updateProduct } = useProducts()
+  const [successMessage, setSuccessMessage] = useState("")
 
   if (!isOpen) return null
 
-  const required = value => (value ? undefined : "Required")
+  const validateName = value => {
+    if (required(value)) return "Required"
+    if (minLength(3)(value)) return "Must be at least 3 characters"
+    if (maxLength(50)(value)) return "Must be 50 characters or less"
+    return undefined
+  }
 
-  const validatePrice = value =>
-    value && Number(value) < 0 ? "Price must be >= 0" : undefined
-
-  const maxLength = max => value =>
-    value && value.length > max
-      ? `Must be at most ${max} characters`
-      : undefined
+  const validateDescription = maxLength(200)
+  const validateCategory = required
 
   const handleSubmit = values => {
     const productData = {
       ...values,
-      price: values.price ? parseFloat(values.price) : 0,
+      price: parseFloat(values.price),
       description: values.description?.slice(0, 200) || "",
+      imageUrl: values.imageUrl || "https://via.placeholder.com/150",
+      quantity: Number(values.quantity),
     }
+
     if (initialValues?.id) {
       updateProduct({ ...initialValues, ...productData })
+      setSuccessMessage("Product updated successfully!")
     } else {
       addProduct({ ...productData, id: Date.now() })
+      setSuccessMessage("Product added successfully!")
     }
-    onClose()
+
+    setTimeout(() => {
+      setSuccessMessage("")
+      onClose()
+    }, 1500)
   }
 
   return (
@@ -53,19 +74,23 @@ function AddProductModal({ isOpen, onClose, initialValues }) {
 
         <Form
           onSubmit={handleSubmit}
-          initialValues={initialValues || {}}
-          render={({ handleSubmit, submitting, form }) => (
+          initialValues={initialValues || { category: "Electronics" }}
+          render={({ handleSubmit, submitting, pristine, invalid, form }) => (
             <form
               onSubmit={event => {
-                handleSubmit(event)?.then(() => form.reset())
+                event.preventDefault()
+                if (!invalid) {
+                  handleSubmit(event)?.then(() => form.reset())
+                }
               }}
               noValidate
             >
+              {/* Name */}
               <div className="field-group">
                 <label className="required" htmlFor="name">
-                  Name
+                  Product Name
                 </label>
-                <Field name="name" validate={required}>
+                <Field name="name" validate={validateName}>
                   {({ input, meta }) => (
                     <>
                       <input
@@ -85,11 +110,98 @@ function AddProductModal({ isOpen, onClose, initialValues }) {
                 </Field>
               </div>
 
+              {/* Price */}
+              <div className="field-group">
+                <label className="required" htmlFor="price">
+                  Price
+                </label>
+                <Field
+                  name="price"
+                  validate={value => required(value) || positiveNumber(value)}
+                >
+                  {({ input, meta }) => (
+                    <>
+                      <input
+                        {...input}
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        placeholder="Price"
+                        id="price"
+                      />
+                      {meta.touched && meta.error && (
+                        <div className="error" role="alert">
+                          {meta.error}
+                        </div>
+                      )}
+                    </>
+                  )}
+                </Field>
+              </div>
+
+              {/* Category */}
+              <div className="field-group">
+                <label className="required" htmlFor="category">
+                  Category
+                </label>
+                <Field
+                  name="category"
+                  component="select"
+                  validate={validateCategory}
+                >
+                  {({ input, meta }) => (
+                    <>
+                      <select {...input} id="category">
+                        <option value="">Select category</option>
+                        <option value="Electronics">Electronics</option>
+                        <option value="Clothing">Clothing</option>
+                        <option value="Books">Books</option>
+                        <option value="Home">Home</option>
+                        <option value="Sports">Sports</option>
+                        <option value="Other">Other</option>
+                      </select>
+                      {meta.touched && meta.error && (
+                        <div className="error" role="alert">
+                          {meta.error}
+                        </div>
+                      )}
+                    </>
+                  )}
+                </Field>
+              </div>
+
+              {/* Quantity */}
+              <div className="field-group">
+                <label className="required" htmlFor="quantity">
+                  Stock Quantity
+                </label>
+                <Field name="quantity" validate={validateQuantity}>
+                  {({ input, meta }) => (
+                    <>
+                      <input
+                        {...input}
+                        type="number"
+                        min="0"
+                        step="1"
+                        placeholder="Stock quantity"
+                        id="quantity"
+                      />
+                      {meta.touched && meta.error && (
+                        <div className="error" role="alert">
+                          {meta.error}
+                        </div>
+                      )}
+                    </>
+                  )}
+                </Field>
+              </div>
+
+              {/* Description */}
               <div className="field-group">
                 <label htmlFor="description">Description</label>
                 <Field
                   name="description"
-                  validate={maxLength(200)}
+                  validate={validateDescription}
                   subscription={{ value: true, touched: true, error: true }}
                 >
                   {({ input, meta }) => (
@@ -114,30 +226,17 @@ function AddProductModal({ isOpen, onClose, initialValues }) {
                 </Field>
               </div>
 
+              {/* Image URL */}
               <div className="field-group">
-                <label htmlFor="category">Category</label>
-                <Field
-                  name="category"
-                  component="input"
-                  placeholder="e.g., Electronics"
-                  id="category"
-                />
-              </div>
-
-              <div className="field-group">
-                <label htmlFor="price">Price</label>
-                <Field
-                  name="price"
-                  component="input"
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  validate={validatePrice}
-                  id="price"
-                >
+                <label htmlFor="imageUrl">Image URL (optional)</label>
+                <Field name="imageUrl" validate={url} id="imageUrl">
                   {({ input, meta }) => (
                     <>
-                      <input {...input} placeholder="Price" />
+                      <input
+                        {...input}
+                        type="url"
+                        placeholder="https://example.com/image.jpg"
+                      />
                       {meta.touched && meta.error && (
                         <div className="error" role="alert">
                           {meta.error}
@@ -148,20 +247,20 @@ function AddProductModal({ isOpen, onClose, initialValues }) {
                 </Field>
               </div>
 
+              {/* Submit button */}
               <div className="form-actions">
-                <button type="submit" disabled={submitting}>
+                <button
+                  type="submit"
+                  disabled={submitting || pristine || invalid}
+                >
                   {initialValues?.id ? "Update" : "Add"}
                 </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    form.reset()
-                    onClose()
-                  }}
-                >
-                  Cancel
-                </button>
               </div>
+
+              {/* Success message */}
+              {successMessage && (
+                <div className="success-message">{successMessage}</div>
+              )}
             </form>
           )}
         />
