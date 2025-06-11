@@ -124,23 +124,23 @@ src/
 
 ### ➕ Add Product Modal
 
-![Add Product Modal](public/screenshots/2.png)
+![Add Product Modal](public/2.png)
 
 ### 🔍 Filters & Search
 
-![Filters and Search](public/screenshots/3.png)
+![Filters and Search](public/3.png)
 
 ### 📱 Mobile Optimization
 
-![Mobile Optimization](public/screenshots/5.png)
+![Mobile Optimization](public/4.png)
 
 ### ❌ Delete Confirmation
 
-![Delete](public/screenshots/5.png)
+![Delete](public/5.png)
 
 ### ✏️ Edit Product
 
-![Edit](public/screenshots/6.png)
+![Edit](public/6.png)
 
 ---
 
