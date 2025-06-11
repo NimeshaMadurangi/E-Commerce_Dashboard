@@ -125,9 +125,3 @@ src/
 ## Demo Video
 
 https://drive.google.com/drive/folders/12nXF3Nq7bQhzVZymk-oOqPjiL9NLM_tb?usp=drive_link
-
----
-
-## 🙌 Acknowledgements
-
-- Built using Vite, React Final Form, and React Testing Library
