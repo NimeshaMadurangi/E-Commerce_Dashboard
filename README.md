@@ -122,9 +122,9 @@ src/
 
 ---
 
-## 📄 License
+## Demo Video
 
-This project is for educational and assessment purposes only.
+https://drive.google.com/drive/folders/12nXF3Nq7bQhzVZymk-oOqPjiL9NLM_tb?usp=drive_link
 
 ---
 
