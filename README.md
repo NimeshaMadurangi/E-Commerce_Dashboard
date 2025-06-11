@@ -43,6 +43,18 @@ npm install
 
 npm run dev
 
+4. For SCSS support
+
+npm install sass
+
+5. React icons
+
+npm install react-icons
+
+6. Install react final form
+
+npm install react-final-form
+
 Then open http://localhost:5173 in your browser.
 
 ---
