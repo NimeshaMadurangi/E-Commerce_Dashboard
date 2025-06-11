@@ -1,4 +1,3 @@
-// src/components/addProductComponent/addProductModal.jsx
 import "./addProductModal.scss"
 import { Form, Field } from "react-final-form"
 import useProducts from "../../hooks/useProducts"
@@ -75,6 +74,7 @@ function AddProductModal({ isOpen, onClose, initialValues }) {
         <Form
           onSubmit={handleSubmit}
           initialValues={initialValues || { category: "Electronics" }}
+          enableReinitialize={true}
           render={({ handleSubmit, submitting, pristine, invalid, form }) => (
             <form
               onSubmit={event => {
@@ -85,7 +85,6 @@ function AddProductModal({ isOpen, onClose, initialValues }) {
               }}
               noValidate
             >
-              {/* Name */}
               <div className="field-group">
                 <label className="required" htmlFor="name">
                   Product Name
@@ -110,7 +109,6 @@ function AddProductModal({ isOpen, onClose, initialValues }) {
                 </Field>
               </div>
 
-              {/* Price */}
               <div className="field-group">
                 <label className="required" htmlFor="price">
                   Price
@@ -139,7 +137,6 @@ function AddProductModal({ isOpen, onClose, initialValues }) {
                 </Field>
               </div>
 
-              {/* Category */}
               <div className="field-group">
                 <label className="required" htmlFor="category">
                   Category
@@ -170,7 +167,6 @@ function AddProductModal({ isOpen, onClose, initialValues }) {
                 </Field>
               </div>
 
-              {/* Quantity */}
               <div className="field-group">
                 <label className="required" htmlFor="quantity">
                   Stock Quantity
@@ -196,7 +192,6 @@ function AddProductModal({ isOpen, onClose, initialValues }) {
                 </Field>
               </div>
 
-              {/* Description */}
               <div className="field-group">
                 <label htmlFor="description">Description</label>
                 <Field
@@ -226,9 +221,8 @@ function AddProductModal({ isOpen, onClose, initialValues }) {
                 </Field>
               </div>
 
-              {/* Image URL */}
               <div className="field-group">
-                <label htmlFor="imageUrl">Image URL (optional)</label>
+                <label htmlFor="imageUrl">Image URL</label>
                 <Field name="imageUrl" validate={url} id="imageUrl">
                   {({ input, meta }) => (
                     <>
@@ -247,7 +241,6 @@ function AddProductModal({ isOpen, onClose, initialValues }) {
                 </Field>
               </div>
 
-              {/* Submit button */}
               <div className="form-actions">
                 <button
                   type="submit"
