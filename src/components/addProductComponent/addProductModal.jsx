@@ -19,19 +19,14 @@ const categories = [
   "Sports",
   "Other",
 ]
-
 const placeholderImage = "https://via.placeholder.com/150"
 
 function AddProductModal({ isOpen, onClose, onAddProduct }) {
   const [successMsg, setSuccessMsg] = useState("")
-
   if (!isOpen) return null
 
   const onSubmit = (values, form) => {
-    // Fallback image URL if invalid or empty
-    if (!values.imageUrl) {
-      values.imageUrl = placeholderImage
-    }
+    if (!values.imageUrl) values.imageUrl = placeholderImage
     onAddProduct(values)
     setSuccessMsg("Product added successfully!")
     form.reset()
@@ -41,10 +36,20 @@ function AddProductModal({ isOpen, onClose, onAddProduct }) {
   return (
     <div className="modal-overlay">
       <div className="modal">
+        <button
+          className="modal-close"
+          onClick={onClose}
+          data-tooltip="Close Form"
+          title="Close Form"
+        >
+          ×
+        </button>
+
         <h3>Add New Product</h3>
+
         <Form
           onSubmit={onSubmit}
-          render={({ handleSubmit, form, submitting, pristine, values }) => (
+          render={({ handleSubmit, submitting }) => (
             <form onSubmit={handleSubmit} noValidate>
               <Field
                 name="productName"
@@ -54,9 +59,7 @@ function AddProductModal({ isOpen, onClose, onAddProduct }) {
               >
                 {({ input, meta }) => (
                   <div className="field-group">
-                    <label htmlFor="name" className="required">
-                      Product Name
-                    </label>
+                    <label className="required">Product Name</label>
                     <input {...input} type="text" placeholder="Product Name" />
                     {meta.touched && meta.error && (
                       <span className="error">{meta.error}</span>
@@ -71,9 +74,7 @@ function AddProductModal({ isOpen, onClose, onAddProduct }) {
               >
                 {({ input, meta }) => (
                   <div className="field-group">
-                    <label htmlFor="price" className="required">
-                      Price
-                    </label>
+                    <label className="required">Price</label>
                     <input {...input} type="text" placeholder="Price" />
                     {meta.touched && meta.error && (
                       <span className="error">{meta.error}</span>
@@ -89,7 +90,7 @@ function AddProductModal({ isOpen, onClose, onAddProduct }) {
               >
                 {({ input }) => (
                   <div className="field-group">
-                    <label htmlFor="category">Category</label>
+                    <label>Category</label>
                     <select {...input}>
                       {categories.map(cat => (
                         <option key={cat} value={cat}>
@@ -107,9 +108,7 @@ function AddProductModal({ isOpen, onClose, onAddProduct }) {
               >
                 {({ input, meta }) => (
                   <div className="field-group">
-                    <label htmlFor="quantity" className="required">
-                      Stock Quantity
-                    </label>
+                    <label className="required">Stock Quantity</label>
                     <input
                       {...input}
                       type="number"
@@ -126,7 +125,7 @@ function AddProductModal({ isOpen, onClose, onAddProduct }) {
               <Field name="description" validate={maxChars(200)}>
                 {({ input, meta }) => (
                   <div className="field-group">
-                    <label htmlFor="description">Description (optional)</label>
+                    <label>Description (optional)</label>
                     <textarea
                       {...input}
                       maxLength={200}
@@ -145,7 +144,7 @@ function AddProductModal({ isOpen, onClose, onAddProduct }) {
               <Field name="imageUrl" validate={url}>
                 {({ input, meta }) => (
                   <div className="field-group">
-                    <label htmlFor="imgUrl">Image URL (optional)</label>
+                    <label>Image URL (optional)</label>
                     <input {...input} type="text" placeholder="Image URL" />
                     {meta.touched && meta.error && (
                       <span className="error">{meta.error}</span>
@@ -157,18 +156,6 @@ function AddProductModal({ isOpen, onClose, onAddProduct }) {
               <div className="form-actions">
                 <button type="submit" disabled={submitting}>
                   Add
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    form.reset()
-                    setSuccessMsg("")
-                  }}
-                >
-                  Reset
-                </button>
-                <button type="button" onClick={onClose}>
-                  Cancel
                 </button>
               </div>
 

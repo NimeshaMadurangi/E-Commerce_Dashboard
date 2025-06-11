@@ -12,12 +12,34 @@
 }
 
 .modal {
+  position: relative;
   background: white;
   padding: 1.5rem;
   border-radius: 8px;
-  width: 400px;
+  width: 500px;
   max-height: 90vh;
   overflow-y: auto;
+}
+
+.modal-close {
+  position: absolute;
+  left: 430px;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: crimson;
+  cursor: pointer;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: darkred;
+  }
+}
+
+h3 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .field-group {
@@ -51,8 +73,8 @@
   justify-content: space-between;
   button {
     padding: 0.5rem 1rem;
-    border: none;
-    background-color: #1976d2;
+    border: 2px #49dcb1;
+    background-color: #40c9a2;
     color: white;
     border-radius: 4px;
     cursor: pointer;
