@@ -118,7 +118,29 @@ src/
 
 ## 📸 Screenshots
 
-(Add screenshots or screen recordings if needed.)
+### 🧩 Full Dashboard View
+
+![Dashboard View](public/1.png)
+
+### ➕ Add Product Modal
+
+![Add Product Modal](public/screenshots/2.png)
+
+### 🔍 Filters & Search
+
+![Filters and Search](public/screenshots/3.png)
+
+### 📱 Mobile Optimization
+
+![Mobile Optimization](public/screenshots/5.png)
+
+### ❌ Delete Confirmation
+
+![Delete](public/screenshots/5.png)
+
+### ✏️ Edit Product
+
+![Edit](public/screenshots/6.png)
 
 ---
 
