@@ -28,7 +28,7 @@ function ProductCard({ product, onDelete, onEdit }) {
         </div>
 
         <div className="product-tags">
-          <span className="category">{category}</span>
+          <span className="category">{category || "-"}</span>
           <span
             className={`status-tag ${
               stockStatus === "in-stock" ? "in-stock" : "out-of-stock"
@@ -39,13 +39,21 @@ function ProductCard({ product, onDelete, onEdit }) {
         </div>
 
         <p className="description">{description || "-"}</p>
-        <p className="stock">Stock: {stockQuantity} Units</p>
+        <p className="stock">Stock: {stockQuantity ?? 0} Units</p>
 
         <div className="product-actions">
-          <button className="btn-edit" onClick={() => onEdit(product)}>
+          <button
+            className="btn-edit"
+            onClick={() => onEdit(product)} // pass full product
+            aria-label={`Edit ${productName}`}
+          >
             <BiEdit />
           </button>
-          <button className="btn-delete" onClick={() => onDelete(id)}>
+          <button
+            className="btn-delete"
+            onClick={() => onDelete(id)} // pass id only
+            aria-label={`Delete ${productName}`}
+          >
             <MdOutlineDeleteOutline />
           </button>
         </div>

@@ -4,40 +4,49 @@ import Header from "../../components/headerComponents/header"
 import FilterComponent from "../../components/filterComponent/filterComponent"
 import AddProductModal from "../../components/addProductComponent/addProductModal"
 import ProductCard from "../../components/productCardComponent/productCard"
+import useProducts from "../../hooks/useProducts"
 
 function AddProductPage() {
-  const [products, setProducts] = useState([])
-  const [showModal, setShowModal] = useState(false)
+  const { products, addProduct, updateProduct, deleteProduct } = useProducts()
 
-  const handleAddProduct = product => {
-    const newProduct = {
-      id: Date.now(),
-      ...product,
-    }
-    setProducts(prev => [...prev, newProduct])
-    setShowModal(false)
+  const [showModal, setShowModal] = useState(false)
+  const [editingProduct, setEditingProduct] = useState(null)
+
+  // Open modal in "Add" mode
+  const handleOpenAddModal = () => {
+    setEditingProduct(null)
+    setShowModal(true)
   }
 
-  const handleDeleteWithConfirmation = (id, onDelete) => {
+  // Open modal in "Edit" mode
+  const handleEditProduct = product => {
+    setEditingProduct(product)
+    setShowModal(true)
+  }
+
+  // Confirm and delete
+  const handleDeleteWithConfirmation = id => {
     const confirmed = window.confirm(
       "Are you sure you want to delete this product?"
     )
     if (confirmed) {
-      onDelete(id)
+      const productToDelete = products.find(p => p.id === id)
+      if (productToDelete) {
+        deleteProduct(productToDelete)
+      }
     }
   }
 
   return (
     <div className="add-product-page">
-      <Header
-        onOpenModal={() => setShowModal(true)}
-        total_count={products.length}
-      />
+      <Header onOpenModal={handleOpenAddModal} total_count={products.length} />
 
       <AddProductModal
         isOpen={showModal}
         onClose={() => setShowModal(false)}
-        onAddProduct={handleAddProduct}
+        onAddProduct={addProduct}
+        onUpdateProduct={updateProduct}
+        initialValues={editingProduct}
       />
 
       <FilterComponent />
@@ -48,7 +57,8 @@ function AddProductPage() {
           <ProductCard
             key={product.id}
             product={product}
-            onDelete={handleDeleteWithConfirmation}
+            onDelete={() => handleDeleteWithConfirmation(product.id)}
+            onEdit={() => handleEditProduct(product)}
           />
         ))}
       </div>

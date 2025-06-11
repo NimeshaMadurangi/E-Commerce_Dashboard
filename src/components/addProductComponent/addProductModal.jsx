@@ -1,167 +1,167 @@
-import { useState } from "react"
 import { Form, Field } from "react-final-form"
-import {
-  required,
-  minLength,
-  maxLength,
-  positiveNumber,
-  nonNegativeInteger,
-  maxChars,
-  url,
-} from "../../validations/validations"
-import "./AddProductModal.scss"
+import useProducts from "../../hooks/useProducts"
 
-const categories = [
-  "Electronics",
-  "Clothing",
-  "Books",
-  "Home",
-  "Sports",
-  "Other",
-]
-const placeholderImage = "https://via.placeholder.com/150"
+function AddProductModal({ isOpen, onClose, initialValues }) {
+  const { addProduct, updateProduct } = useProducts()
 
-function AddProductModal({ isOpen, onClose, onAddProduct }) {
-  const [successMsg, setSuccessMsg] = useState("")
   if (!isOpen) return null
 
-  const onSubmit = (values, form) => {
-    if (!values.imageUrl) values.imageUrl = placeholderImage
-    onAddProduct(values)
-    setSuccessMsg("Product added successfully!")
-    form.reset()
-    setTimeout(() => setSuccessMsg(""), 3000)
+  const required = value => (value ? undefined : "Required")
+
+  const validatePrice = value =>
+    value && Number(value) < 0 ? "Price must be >= 0" : undefined
+
+  const maxLength = max => value =>
+    value && value.length > max
+      ? `Must be at most ${max} characters`
+      : undefined
+
+  const handleSubmit = values => {
+    const productData = {
+      ...values,
+      price: values.price ? parseFloat(values.price) : 0,
+      description: values.description?.slice(0, 200) || "",
+    }
+    if (initialValues?.id) {
+      updateProduct({ ...initialValues, ...productData })
+    } else {
+      addProduct({ ...productData, id: Date.now() })
+    }
+    onClose()
   }
 
   return (
     <div className="modal-overlay">
-      <div className="modal">
+      <div
+        className="modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modal-title"
+      >
         <button
           className="modal-close"
           onClick={onClose}
-          data-tooltip="Close Form"
-          title="Close Form"
+          aria-label="Close modal"
+          type="button"
         >
           ×
         </button>
 
-        <h3>Add New Product</h3>
+        <h2 id="modal-title">
+          {initialValues?.id ? "Edit Product" : "Add Product"}
+        </h2>
 
         <Form
-          onSubmit={onSubmit}
-          render={({ handleSubmit, submitting }) => (
-            <form onSubmit={handleSubmit} noValidate>
-              <Field
-                name="productName"
-                validate={value =>
-                  required(value) || minLength(3)(value) || maxLength(50)(value)
-                }
-              >
-                {({ input, meta }) => (
-                  <div className="field-group">
-                    <label className="required">Product Name</label>
-                    <input {...input} type="text" placeholder="Product Name" />
-                    {meta.touched && meta.error && (
-                      <span className="error">{meta.error}</span>
-                    )}
-                  </div>
-                )}
-              </Field>
+          onSubmit={handleSubmit}
+          initialValues={initialValues || {}}
+          render={({ handleSubmit, submitting, form }) => (
+            <form
+              onSubmit={event => {
+                handleSubmit(event)?.then(() => form.reset())
+              }}
+              noValidate
+            >
+              <div className="field-group">
+                <label className="required" htmlFor="name">
+                  Name
+                </label>
+                <Field name="name" validate={required}>
+                  {({ input, meta }) => (
+                    <>
+                      <input
+                        {...input}
+                        type="text"
+                        placeholder="Product name"
+                        id="name"
+                        autoFocus
+                      />
+                      {meta.touched && meta.error && (
+                        <div className="error" role="alert">
+                          {meta.error}
+                        </div>
+                      )}
+                    </>
+                  )}
+                </Field>
+              </div>
 
-              <Field
-                name="price"
-                validate={value => required(value) || positiveNumber(value)}
-              >
-                {({ input, meta }) => (
-                  <div className="field-group">
-                    <label className="required">Price</label>
-                    <input {...input} type="text" placeholder="Price" />
-                    {meta.touched && meta.error && (
-                      <span className="error">{meta.error}</span>
-                    )}
-                  </div>
-                )}
-              </Field>
+              <div className="field-group">
+                <label htmlFor="description">Description</label>
+                <Field
+                  name="description"
+                  validate={maxLength(200)}
+                  subscription={{ value: true, touched: true, error: true }}
+                >
+                  {({ input, meta }) => (
+                    <>
+                      <textarea
+                        {...input}
+                        rows={3}
+                        placeholder="Short description"
+                        id="description"
+                        maxLength={200}
+                      />
+                      <div className="char-counter">
+                        {input.value?.length || 0}/200
+                      </div>
+                      {meta.touched && meta.error && (
+                        <div className="error" role="alert">
+                          {meta.error}
+                        </div>
+                      )}
+                    </>
+                  )}
+                </Field>
+              </div>
 
-              <Field
-                name="category"
-                component="select"
-                initialValue="Electronics"
-              >
-                {({ input }) => (
-                  <div className="field-group">
-                    <label>Category</label>
-                    <select {...input}>
-                      {categories.map(cat => (
-                        <option key={cat} value={cat}>
-                          {cat}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                )}
-              </Field>
+              <div className="field-group">
+                <label htmlFor="category">Category</label>
+                <Field
+                  name="category"
+                  component="input"
+                  placeholder="e.g., Electronics"
+                  id="category"
+                />
+              </div>
 
-              <Field
-                name="stockQuantity"
-                validate={value => required(value) || nonNegativeInteger(value)}
-              >
-                {({ input, meta }) => (
-                  <div className="field-group">
-                    <label className="required">Stock Quantity</label>
-                    <input
-                      {...input}
-                      type="number"
-                      min="0"
-                      placeholder="Stock Quantity"
-                    />
-                    {meta.touched && meta.error && (
-                      <span className="error">{meta.error}</span>
-                    )}
-                  </div>
-                )}
-              </Field>
-
-              <Field name="description" validate={maxChars(200)}>
-                {({ input, meta }) => (
-                  <div className="field-group">
-                    <label>Description (optional)</label>
-                    <textarea
-                      {...input}
-                      maxLength={200}
-                      placeholder="Description"
-                    />
-                    <div className="char-counter">
-                      {input.value.length || 0}/200
-                    </div>
-                    {meta.touched && meta.error && (
-                      <span className="error">{meta.error}</span>
-                    )}
-                  </div>
-                )}
-              </Field>
-
-              <Field name="imageUrl" validate={url}>
-                {({ input, meta }) => (
-                  <div className="field-group">
-                    <label>Image URL (optional)</label>
-                    <input {...input} type="text" placeholder="Image URL" />
-                    {meta.touched && meta.error && (
-                      <span className="error">{meta.error}</span>
-                    )}
-                  </div>
-                )}
-              </Field>
+              <div className="field-group">
+                <label htmlFor="price">Price</label>
+                <Field
+                  name="price"
+                  component="input"
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  validate={validatePrice}
+                  id="price"
+                >
+                  {({ input, meta }) => (
+                    <>
+                      <input {...input} placeholder="Price" />
+                      {meta.touched && meta.error && (
+                        <div className="error" role="alert">
+                          {meta.error}
+                        </div>
+                      )}
+                    </>
+                  )}
+                </Field>
+              </div>
 
               <div className="form-actions">
                 <button type="submit" disabled={submitting}>
-                  Add
+                  {initialValues?.id ? "Update" : "Add"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    form.reset()
+                    onClose()
+                  }}
+                >
+                  Cancel
                 </button>
               </div>
-
-              {successMsg && (
-                <div className="success-message">{successMsg}</div>
-              )}
             </form>
           )}
         />
