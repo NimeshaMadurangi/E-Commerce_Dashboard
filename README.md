@@ -8,7 +8,7 @@ This is a fully functional E-Commerce Product Dashboard built with **React**, de
 
 - ✅ Add new products with validation
 - ✅ Edit existing products
-- ✅ Delete single or multiple products (with confirmation)
+- ✅ Delete single products (with confirmation)
 - ✅ Undo deletion within 5 seconds
 - ✅ Filter by category, price range, and stock
 - ✅ Real-time search by product name
