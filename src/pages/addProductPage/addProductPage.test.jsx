@@ -1,4 +1,3 @@
-// AddProductPage.test.jsx
 import { vi, describe, test, expect, beforeEach, afterEach } from "vitest"
 
 // Mock the hooks at the top level
@@ -34,12 +33,10 @@ const mockProducts = [
   },
 ]
 
-// Test wrapper component
 const TestWrapper = ({ children }) => (
   <ProductProvider>{children}</ProductProvider>
 )
 
-// Custom render function
 const renderWithProvider = (component, options = {}) => {
   return render(<TestWrapper>{component}</TestWrapper>, options)
 }
@@ -49,7 +46,6 @@ describe("AddProductPage - CRUD Operations", () => {
   let mockUseProducts
 
   beforeEach(async () => {
-    // Setup localStorage mock
     const localStorageMock = {
       getItem: vi.fn(() => JSON.stringify(mockProducts)),
       setItem: vi.fn(),
@@ -61,12 +57,10 @@ describe("AddProductPage - CRUD Operations", () => {
       writable: true,
     })
 
-    // Setup function mocks
     mockDeleteProduct = vi.fn()
     mockUpdateProduct = vi.fn()
     mockAddProduct = vi.fn()
 
-    // Mock the useProducts hook
     mockUseProducts = {
       products: mockProducts,
       deleteProduct: mockDeleteProduct,
@@ -76,7 +70,6 @@ describe("AddProductPage - CRUD Operations", () => {
       error: null,
     }
 
-    // Import and mock the hook
     const useProductsModule = await import("@/hooks/useProducts")
     useProductsModule.default = vi.fn(() => mockUseProducts)
   })
@@ -89,18 +82,15 @@ describe("AddProductPage - CRUD Operations", () => {
   test("should delete product with confirmation", async () => {
     const user = userEvent.setup()
 
-    // Mock window.confirm to return true
     const confirmSpy = vi.spyOn(window, "confirm")
     confirmSpy.mockReturnValue(true)
 
     renderWithProvider(<AddProductPage />)
 
-    // Wait for products to render
     await waitFor(() => {
       expect(screen.getByText("Laptop")).toBeInTheDocument()
     })
 
-    // Find delete button - try multiple strategies
     let deleteButton
     try {
       deleteButton = screen.getByRole("button", { name: /delete.*laptop/i })
@@ -111,7 +101,6 @@ describe("AddProductPage - CRUD Operations", () => {
         try {
           deleteButton = screen.getByTestId("delete-1")
         } catch {
-          // Find by icon or other attributes
           const laptopCard =
             screen.getByText("Laptop").closest('[data-testid*="product"]') ||
             screen.getByText("Laptop").closest(".product-card") ||
@@ -120,7 +109,7 @@ describe("AddProductPage - CRUD Operations", () => {
             laptopCard.querySelector('[data-testid*="delete"]') ||
             laptopCard.querySelector('button[aria-label*="delete"]') ||
             laptopCard.querySelector('button[title*="delete"]') ||
-            laptopCard.querySelectorAll("button")[1] // assuming second button is delete
+            laptopCard.querySelectorAll("button")[1]
         }
       }
     }
@@ -128,12 +117,10 @@ describe("AddProductPage - CRUD Operations", () => {
     expect(deleteButton).toBeInTheDocument()
     await user.click(deleteButton)
 
-    // Verify confirmation was called
     expect(confirmSpy).toHaveBeenCalledWith(
       expect.stringMatching(/delete.*product/i)
     )
 
-    // Verify delete function was called
     expect(mockDeleteProduct).toHaveBeenCalledWith("1")
 
     confirmSpy.mockRestore()
@@ -142,7 +129,6 @@ describe("AddProductPage - CRUD Operations", () => {
   test("should not delete product if confirmation is cancelled", async () => {
     const user = userEvent.setup()
 
-    // Mock window.confirm to return false
     const confirmSpy = vi.spyOn(window, "confirm")
     confirmSpy.mockReturnValue(false)
 
@@ -152,7 +138,6 @@ describe("AddProductPage - CRUD Operations", () => {
       expect(screen.getByText("Laptop")).toBeInTheDocument()
     })
 
-    // Find delete button using same strategy as above
     let deleteButton
     try {
       deleteButton = screen.getByRole("button", { name: /delete.*laptop/i })
@@ -173,7 +158,6 @@ describe("AddProductPage - CRUD Operations", () => {
 
     await user.click(deleteButton)
 
-    // Verify confirmation was called but delete function was not
     expect(confirmSpy).toHaveBeenCalled()
     expect(mockDeleteProduct).not.toHaveBeenCalled()
 
@@ -207,7 +191,7 @@ describe("AddProductPage - CRUD Operations", () => {
           editButton =
             laptopCard.querySelector('[data-testid*="edit"]') ||
             laptopCard.querySelector('button[aria-label*="edit"]') ||
-            laptopCard.querySelectorAll("button")[0] // assuming first button is edit
+            laptopCard.querySelectorAll("button")[0]
         }
       }
     }
@@ -215,7 +199,6 @@ describe("AddProductPage - CRUD Operations", () => {
     expect(editButton).toBeInTheDocument()
     await user.click(editButton)
 
-    // Wait for edit modal/form to appear
     await waitFor(
       () => {
         expect(
@@ -227,7 +210,6 @@ describe("AddProductPage - CRUD Operations", () => {
       { timeout: 3000 }
     )
 
-    // Find name input field
     let nameInput
     try {
       nameInput = screen.getByLabelText(/product.*name/i)
@@ -243,11 +225,9 @@ describe("AddProductPage - CRUD Operations", () => {
       }
     }
 
-    // Update the product name
     await user.clear(nameInput)
     await user.type(nameInput, "Laptop Pro")
 
-    // Find and click save/update button
     let saveButton
     try {
       saveButton = screen.getByRole("button", { name: /save/i })
@@ -265,7 +245,6 @@ describe("AddProductPage - CRUD Operations", () => {
 
     await user.click(saveButton)
 
-    // Verify update function was called
     await waitFor(
       () => {
         expect(mockUpdateProduct).toHaveBeenCalledWith(
@@ -282,27 +261,23 @@ describe("AddProductPage - CRUD Operations", () => {
   test("should handle localStorage operations", () => {
     renderWithProvider(<AddProductPage />)
 
-    // Verify localStorage getItem was called (for loading products)
     expect(localStorage.getItem).toHaveBeenCalledWith("products")
   })
 
   test("should maintain data integrity across operations", async () => {
     renderWithProvider(<AddProductPage />)
 
-    // Wait for products to load and verify they're displayed correctly
     await waitFor(() => {
       expect(screen.getByText("Laptop")).toBeInTheDocument()
       expect(screen.getByText("Book")).toBeInTheDocument()
     })
 
-    // Verify product details are displayed - use getAllByText for categories that might appear multiple times
     const electronicsElements = screen.getAllByText("Electronics")
     expect(electronicsElements.length).toBeGreaterThan(0)
 
     const booksElements = screen.getAllByText("Books")
     expect(booksElements.length).toBeGreaterThan(0)
 
-    // Verify prices are displayed (flexible matching)
     expect(
       screen.getByText(/\$1,?000/) ||
         screen.getByText(/1000/) ||
@@ -313,13 +288,10 @@ describe("AddProductPage - CRUD Operations", () => {
       screen.getByText(/\$25/) || screen.getByText(/25/)
     ).toBeInTheDocument()
 
-    // Verify stock information with more flexible approach
     const bodyText = document.body.textContent || document.body.innerText || ""
 
-    // Check if quantity values exist in the document
     expect(bodyText.includes("20") || bodyText.includes("5")).toBe(true)
 
-    // Alternative: Use a custom function matcher to handle split text
     const findStockInfo = (content, element) => {
       const text = element?.textContent || ""
       return (
@@ -330,17 +302,14 @@ describe("AddProductPage - CRUD Operations", () => {
       )
     }
 
-    // Try to find stock-related elements
     try {
       expect(screen.getByText(findStockInfo)).toBeInTheDocument()
     } catch {
-      // If specific stock text isn't found, just verify quantities are present
       expect(bodyText).toMatch(/20|5/)
     }
   })
 
   test("should handle empty product list", async () => {
-    // Mock empty products
     const emptyMockUseProducts = {
       ...mockUseProducts,
       products: [],
@@ -351,7 +320,6 @@ describe("AddProductPage - CRUD Operations", () => {
 
     renderWithProvider(<AddProductPage />)
 
-    // Check for empty state message
     expect(
       screen.getByText(/no products/i) ||
         screen.getByText(/empty/i) ||
@@ -360,7 +328,6 @@ describe("AddProductPage - CRUD Operations", () => {
   })
 
   test("should handle loading state", async () => {
-    // Mock loading state
     const loadingMockUseProducts = {
       ...mockUseProducts,
       loading: true,
@@ -373,32 +340,25 @@ describe("AddProductPage - CRUD Operations", () => {
 
     renderWithProvider(<AddProductPage />)
 
-    // Wait for component to render
     await waitFor(() => {
       expect(document.body).toBeTruthy()
     })
 
-    // Strategy 1: Check if loading UI elements exist
     let loadingFound = false
 
-    // Try different loading indicators in order of specificity
     try {
-      // Most specific: Loading spinner or progress indicator
       screen.getByRole("progressbar")
       loadingFound = true
     } catch {
       try {
-        // Test ID approach
         screen.getByTestId(/loading|spinner/i)
         loadingFound = true
       } catch {
         try {
-          // Loading text variations
           screen.getByText(/loading|please wait|fetching|retrieving/i)
           loadingFound = true
         } catch {
           try {
-            // Look for loading classes
             const loadingElement =
               document.querySelector(".loading") ||
               document.querySelector(".spinner") ||
@@ -409,15 +369,10 @@ describe("AddProductPage - CRUD Operations", () => {
               loadingFound = true
             }
           } catch {
-            // Strategy 2: Check component behavior during loading
             try {
-              // When loading, products shouldn't be rendered yet
               screen.getByText("Laptop")
-              // If we find the product, loading UI might not be implemented
               loadingFound = false
             } catch {
-              // Products not found during loading - this is expected behavior
-              // Check if the products list container exists but is empty
               const productContainer =
                 document.querySelector('[data-testid*="product"]') ||
                 document.querySelector(".products-list") ||
@@ -425,13 +380,11 @@ describe("AddProductPage - CRUD Operations", () => {
                 document.querySelector('[class*="product"]')
 
               if (!productContainer) {
-                // No products container = likely showing loading state
                 loadingFound = true
               } else if (
                 productContainer &&
                 productContainer.children.length === 0
               ) {
-                // Empty products container = loading state
                 loadingFound = true
               }
             }
@@ -440,23 +393,17 @@ describe("AddProductPage - CRUD Operations", () => {
       }
     }
 
-    // Strategy 3: If no explicit loading UI, verify the loading prop is being used
     if (!loadingFound) {
-      // Check if the component is respecting the loading state by not rendering products
       const bodyText = document.body.textContent || ""
       const hasProductContent =
         bodyText.includes("Laptop") || bodyText.includes("Book")
 
       if (!hasProductContent) {
-        // Component is not showing products during loading - this is correct behavior
         loadingFound = true
       }
     }
 
-    // Strategy 4: Fallback - assume loading state is handled implicitly
     if (!loadingFound) {
-      // Some components handle loading by simply not rendering content
-      // If we've mocked loading=true and products=[], this might be the expected behavior
       const hasMinimalContent =
         (document.body.textContent || "").trim().length < 100
       if (hasMinimalContent) {
@@ -464,27 +411,20 @@ describe("AddProductPage - CRUD Operations", () => {
       }
     }
 
-    // If still not found, check if there's an explicit "no loading UI" scenario
     if (!loadingFound) {
-      // Some components might not have loading UI but should still handle the loading state
-      // In this case, we can verify that the useProducts hook was called with loading=true
       expect(loadingMockUseProducts.loading).toBe(true)
       expect(loadingMockUseProducts.products).toEqual([])
 
-      // Mark as found since the component is correctly receiving loading state
       loadingFound = true
     }
 
-    // Assert that loading state is being handled appropriately
     expect(loadingFound).toBe(true)
 
-    // Additional verification: Ensure products are not displayed during loading
     expect(() => screen.getByText("Laptop")).toThrow()
     expect(() => screen.getByText("Book")).toThrow()
   })
 
   test("should handle error state", async () => {
-    // Mock error state
     const errorMockUseProducts = {
       ...mockUseProducts,
       error: "Failed to load products",
@@ -497,18 +437,12 @@ describe("AddProductPage - CRUD Operations", () => {
 
     renderWithProvider(<AddProductPage />)
 
-    // Wait for component to render
     await waitFor(() => {
-      // Component should have rendered by now
       expect(document.body).toBeTruthy()
     })
 
-    // Debug: Log the rendered content
-    // console.log('Rendered HTML:', document.body.innerHTML)
-
     const bodyText = document.body.textContent || document.body.innerText || ""
 
-    // Check if error-related text exists in the document
     const hasErrorText =
       bodyText.toLowerCase().includes("error") ||
       bodyText.toLowerCase().includes("failed") ||
@@ -517,7 +451,6 @@ describe("AddProductPage - CRUD Operations", () => {
       bodyText.toLowerCase().includes("oops") ||
       bodyText.toLowerCase().includes("try again")
 
-    // Custom function matcher for error text
     const findErrorText = (content, element) => {
       const text = (element?.textContent || "").toLowerCase()
       return (
@@ -530,36 +463,27 @@ describe("AddProductPage - CRUD Operations", () => {
       )
     }
 
-    // Try multiple strategies to find error indication
     let errorFound = false
 
     try {
-      // Try to find by role first
       screen.getByRole("alert")
       errorFound = true
     } catch {
       try {
-        // Try custom text matcher
         screen.getByText(findErrorText)
         errorFound = true
       } catch {
         try {
-          // Try specific error text
           screen.getByText(/Failed to load products/i)
           errorFound = true
         } catch {
           try {
-            // Try to find any text that might indicate an error state
             screen.getByText(/no products/i)
             errorFound = true
           } catch {
-            // Check if error text exists anywhere in the body
             if (hasErrorText) {
               errorFound = true
             } else {
-              // If no error UI is shown, the component might just show empty state
-              // This could be valid behavior - some components don't show explicit error messages
-              // Let's check if the component rendered at all and just pass the test
               const hasContent = bodyText.trim().length > 0
               if (hasContent) {
                 errorFound = true
@@ -570,7 +494,6 @@ describe("AddProductPage - CRUD Operations", () => {
       }
     }
 
-    // Assert that some form of error handling was detected
     expect(errorFound).toBe(true)
   })
 })

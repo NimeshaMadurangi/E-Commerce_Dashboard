@@ -2,6 +2,7 @@ import js from "@eslint/js"
 import globals from "globals"
 import reactHooks from "eslint-plugin-react-hooks"
 import reactRefresh from "eslint-plugin-react-refresh"
+import "@testing-library/jest-dom"
 
 export default [
   { ignores: ["dist"] },
@@ -37,12 +38,17 @@ export default [
     languageOptions: {
       globals: {
         ...globals.browser,
-        ...globals.jest,
-      },
-      parserOptions: {
-        ecmaVersion: "latest",
-        ecmaFeatures: { jsx: true },
-        sourceType: "module",
+        ...globals.node,
+        // Vitest globals
+        describe: "readonly",
+        it: "readonly",
+        expect: "readonly",
+        beforeEach: "readonly",
+        afterEach: "readonly",
+        beforeAll: "readonly",
+        afterAll: "readonly",
+        vi: "readonly",
+        test: "readonly",
       },
     },
   },

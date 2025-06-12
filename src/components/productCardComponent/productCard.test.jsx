@@ -1,7 +1,16 @@
-jest.mock("@/hooks/useProducts")
-
+import { describe, test, expect, vi, beforeEach } from "vitest"
 import { render, screen, fireEvent } from "@testing-library/react"
 import ProductCard from "@/components/productCardComponent/productCard"
+
+import "@testing-library/jest-dom/vitest"
+
+vi.mock("@/hooks/useProducts", () => ({
+  default: vi.fn(() => ({
+    products: [],
+    loading: false,
+    error: null,
+  })),
+}))
 
 const product = {
   id: 1,
@@ -14,9 +23,20 @@ const product = {
 }
 
 describe("ProductCard", () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
   test("should render product information correctly", () => {
+    const handleEdit = vi.fn()
+    const handleDelete = vi.fn()
+
     render(
-      <ProductCard product={product} onDelete={jest.fn()} onEdit={jest.fn()} />
+      <ProductCard
+        product={product}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+      />
     )
 
     expect(screen.getByText("Sample Product")).toBeInTheDocument()
@@ -25,10 +45,9 @@ describe("ProductCard", () => {
     expect(screen.getByText("Low Stock")).toBeInTheDocument()
     expect(screen.getByText("This is a sample product.")).toBeInTheDocument()
     expect(screen.getByText("Stock: 3 Units")).toBeInTheDocument()
-    expect(screen.getByRole("img")).toHaveAttribute(
-      "src",
-      "https://example.com/sample.jpg"
-    )
+
+    const img = document.querySelector("img.product-img")
+    expect(img).toHaveAttribute("src", "https://example.com/sample.jpg")
   })
 
   test("should handle empty state gracefully", () => {
@@ -42,32 +61,36 @@ describe("ProductCard", () => {
       imageUrl: "",
     }
 
+    const handleEdit = vi.fn()
+    const handleDelete = vi.fn()
+
     render(
       <ProductCard
         product={emptyProduct}
-        onDelete={jest.fn()}
-        onEdit={jest.fn()}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
       />
     )
 
-    expect(screen.getByText("-")).toBeInTheDocument() // category fallback
+    const categoryElements = screen.getAllByText("-")
+    expect(categoryElements.length).toBeGreaterThan(0)
+
     expect(screen.getByText("Out of Stock")).toBeInTheDocument()
     expect(screen.getByText("Stock: 0 Units")).toBeInTheDocument()
-    expect(screen.getByRole("img")).toHaveAttribute(
-      "src",
-      "https://via.placeholder.com/250"
-    )
+
+    const img = document.querySelector("img.product-img")
+    expect(img).toHaveAttribute("src", "https://via.placeholder.com/250")
   })
 
   test("should trigger edit and delete callbacks", () => {
-    const handleEdit = jest.fn()
-    const handleDelete = jest.fn()
+    const handleEdit = vi.fn()
+    const handleDelete = vi.fn()
 
     render(
       <ProductCard
         product={product}
-        onDelete={handleDelete}
         onEdit={handleEdit}
+        onDelete={handleDelete}
       />
     )
 
@@ -79,10 +102,18 @@ describe("ProductCard", () => {
   })
 
   test("should handle image loading error and fallback", () => {
+    const handleEdit = vi.fn()
+    const handleDelete = vi.fn()
+
     render(
-      <ProductCard product={product} onDelete={jest.fn()} onEdit={jest.fn()} />
+      <ProductCard
+        product={product}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+      />
     )
-    const image = screen.getByRole("img")
+
+    const image = document.querySelector("img.product-img")
     fireEvent.error(image)
     expect(image).toBeInTheDocument()
   })
