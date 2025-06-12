@@ -1,11 +1,13 @@
-jest.mock("@/hooks/useProducts")
+import { vi } from "vitest"
+
+vi.mock("@/hooks/useProducts")
 
 import "@testing-library/jest-dom"
 import { render, screen, fireEvent } from "@testing-library/react"
 import FilterComponent from "@/components/filterComponent/filterComponent"
 
 describe("FilterComponent", () => {
-  const setup = (filters = {}, onChange = jest.fn()) => {
+  const setup = (filters = {}, onChange = vi.fn()) => {
     render(<FilterComponent filters={filters} onChange={onChange} />)
     return onChange
   }
