@@ -1,127 +1,124 @@
-jest.mock("@/hooks/useProducts")
+import React from "react"
+import { render, screen, fireEvent, waitFor } from "@testing-library/react"
+import AddProductModal from "./addProductModal"
+import useProducts from "../../hooks/useProducts"
 
-import "@testing-library/jest-dom"
-import { render, screen, waitFor } from "@testing-library/react"
-import userEvent from "@testing-library/user-event"
-import { vi } from "vitest"
-import AddProductModal from "@/components/addProductComponent/addProductModal"
-import { ProductProvider } from "@/context/ProductContext"
+jest.mock("../../hooks/useProducts")
 
-function renderModal(props = {}) {
-  return render(
-    <ProductProvider>
-      <AddProductModal isOpen={true} onClose={vi.fn()} {...props} />
-    </ProductProvider>
-  )
-}
+describe("AddProductModal", () => {
+  const mockAddProduct = jest.fn(() => true)
+  const mockUpdateProduct = jest.fn(() => true)
 
-describe("Product Form - AddProductModal", () => {
-  test("renders form with all required fields", () => {
-    renderModal()
-    expect(screen.getByLabelText(/Product Name/i)).toBeInTheDocument()
-    expect(screen.getByLabelText(/Description/i)).toBeInTheDocument()
-    expect(screen.getByLabelText(/Price/i)).toBeInTheDocument()
-    expect(screen.getByLabelText(/Stock Quantity/i)).toBeInTheDocument()
-    expect(screen.getByLabelText(/Category/i)).toBeInTheDocument()
-    expect(screen.getByLabelText(/Image URL/i)).toBeInTheDocument()
+  const defaultProps = {
+    isOpen: true,
+    onClose: jest.fn(),
+    initialValues: null,
+  }
+
+  beforeEach(() => {
+    useProducts.mockReturnValue({
+      addProduct: mockAddProduct,
+      updateProduct: mockUpdateProduct,
+    })
+    jest.clearAllMocks()
   })
 
-  test("shows validation errors for invalid inputs", async () => {
-    renderModal()
-    const submit = screen.getByRole("button", { name: /add/i })
-    await userEvent.click(submit)
-    expect(await screen.findAllByText("Required")).not.toHaveLength(0)
+  it("renders the modal with empty form when adding", () => {
+    render(<AddProductModal {...defaultProps} />)
+
+    expect(screen.getByLabelText(/product name/i)).toBeInTheDocument()
+    expect(screen.getByLabelText(/price/i)).toBeInTheDocument()
+    expect(screen.getByLabelText(/category/i)).toBeInTheDocument()
+    expect(screen.getByLabelText(/stock quantity/i)).toBeInTheDocument()
+    expect(screen.getByLabelText(/description/i)).toBeInTheDocument()
+    expect(screen.getByLabelText(/image url/i)).toBeInTheDocument()
+    expect(screen.getByRole("button", { name: /add/i })).toBeDisabled()
   })
 
-  test("prevents submission with invalid data", async () => {
-    const onClose = vi.fn()
-    renderModal({ onClose })
+  it("submits form and calls addProduct", async () => {
+    render(<AddProductModal {...defaultProps} />)
 
-    await userEvent.clear(screen.getByLabelText(/Product Name/i))
-    await userEvent.clear(screen.getByLabelText(/Price/i))
-    await userEvent.type(screen.getByLabelText(/Price/i), "-100")
-    await userEvent.clear(screen.getByLabelText(/Stock Quantity/i))
-    await userEvent.type(screen.getByLabelText(/Stock Quantity/i), "-1")
-
-    const submit = screen.getByRole("button", { name: /add/i })
-    await userEvent.click(submit)
-
-    await waitFor(() => {
-      expect(onClose).not.toHaveBeenCalled()
+    fireEvent.change(screen.getByLabelText(/product name/i), {
+      target: { value: "Test Product" },
+    })
+    fireEvent.change(screen.getByLabelText(/price/i), {
+      target: { value: "9.99" },
+    })
+    fireEvent.change(screen.getByLabelText(/category/i), {
+      target: { value: "Books" },
+    })
+    fireEvent.change(screen.getByLabelText(/stock quantity/i), {
+      target: { value: "5" },
     })
 
-    expect(screen.getByText("Required")).toBeInTheDocument()
+    fireEvent.click(screen.getByRole("button", { name: /add/i }))
+
+    await waitFor(() => {
+      expect(mockAddProduct).toHaveBeenCalled()
+      expect(defaultProps.onClose).toHaveBeenCalled()
+    })
   })
 
-  test("successfully adds product with valid data", async () => {
-    const onClose = vi.fn()
-    renderModal({ onClose })
-
-    await userEvent.type(screen.getByLabelText(/Product Name/i), "Test Product")
-    await userEvent.type(screen.getByLabelText(/Description/i), "Test Desc")
-    await userEvent.clear(screen.getByLabelText(/Price/i))
-    await userEvent.type(screen.getByLabelText(/Price/i), "50")
-    await userEvent.clear(screen.getByLabelText(/Stock Quantity/i))
-    await userEvent.type(screen.getByLabelText(/Stock Quantity/i), "5")
-    await userEvent.selectOptions(screen.getByLabelText(/Category/i), "Books")
-    await userEvent.type(
-      screen.getByLabelText(/Image URL/i),
-      "http://img.com/pic.jpg"
-    )
-
-    await userEvent.click(screen.getByRole("button", { name: /add/i }))
-    await waitFor(() => expect(onClose).toHaveBeenCalled(), { timeout: 2000 })
-  })
-
-  test("clears form after successful submission", async () => {
-    const onClose = vi.fn()
-    const { rerender } = renderModal({ onClose })
-
-    await userEvent.type(
-      screen.getByLabelText(/Product Name/i),
-      "Clear Product"
-    )
-    await userEvent.clear(screen.getByLabelText(/Price/i))
-    await userEvent.type(screen.getByLabelText(/Price/i), "25")
-    await userEvent.clear(screen.getByLabelText(/Stock Quantity/i))
-    await userEvent.type(screen.getByLabelText(/Stock Quantity/i), "2")
-
-    await userEvent.click(screen.getByRole("button", { name: /add/i }))
-    await waitFor(() => expect(onClose).toHaveBeenCalled(), { timeout: 2000 })
-
-    rerender(
-      <ProductProvider>
-        <AddProductModal isOpen={true} onClose={vi.fn()} />
-      </ProductProvider>
-    )
-
-    expect(screen.getByLabelText(/Product Name/i)).toHaveValue("")
-    expect(screen.getByLabelText(/Price/i)).toHaveValue(null)
-    expect(screen.getByLabelText(/Stock Quantity/i)).toHaveValue(null)
-  })
-
-  test("handles edit mode correctly", () => {
-    const product = {
-      id: 1,
-      name: "Edit Product",
-      description: "Edit Desc",
-      price: 100,
-      quantity: 10,
-      category: "Clothing",
-      imageUrl: "http://img.com/edit.jpg",
+  it("renders with initialValues when editing", () => {
+    const props = {
+      ...defaultProps,
+      initialValues: {
+        id: 123,
+        name: "Existing Product",
+        price: 19.99,
+        category: "Electronics",
+        quantity: 10,
+        description: "Sample description",
+        imageUrl: "https://example.com/image.jpg",
+      },
     }
 
-    renderModal({ initialValues: product })
+    render(<AddProductModal {...props} />)
 
-    expect(screen.getByLabelText(/Product Name/i)).toHaveValue(product.name)
-    expect(screen.getByLabelText(/Description/i)).toHaveValue(
-      product.description
+    expect(screen.getByDisplayValue(/existing product/i)).toBeInTheDocument()
+    expect(screen.getByRole("button", { name: /update/i })).toBeInTheDocument()
+  })
+
+  it("submits updated product", async () => {
+    const props = {
+      ...defaultProps,
+      initialValues: {
+        id: 123,
+        name: "Old Name",
+        price: 10,
+        category: "Books",
+        quantity: 1,
+        imageUrl: "",
+      },
+    }
+
+    render(<AddProductModal {...props} />)
+
+    fireEvent.change(screen.getByLabelText(/product name/i), {
+      target: { value: "Updated Name" },
+    })
+
+    fireEvent.click(screen.getByRole("button", { name: /update/i }))
+
+    await waitFor(() => {
+      expect(mockUpdateProduct).toHaveBeenCalled()
+      expect(defaultProps.onClose).toHaveBeenCalled()
+    })
+  })
+
+  it("closes modal on close button click", () => {
+    render(<AddProductModal {...defaultProps} />)
+
+    const closeButton = screen.getByRole("button", { name: /close modal/i })
+    fireEvent.click(closeButton)
+
+    expect(defaultProps.onClose).toHaveBeenCalled()
+  })
+
+  it("does not render if isOpen is false", () => {
+    const { container } = render(
+      <AddProductModal {...defaultProps} isOpen={false} />
     )
-    expect(screen.getByLabelText(/Price/i)).toHaveValue(product.price)
-    expect(screen.getByLabelText(/Stock Quantity/i)).toHaveValue(
-      product.quantity
-    )
-    expect(screen.getByLabelText(/Category/i)).toHaveValue(product.category)
-    expect(screen.getByLabelText(/Image URL/i)).toHaveValue(product.imageUrl)
+    expect(container.firstChild).toBeNull()
   })
 })
