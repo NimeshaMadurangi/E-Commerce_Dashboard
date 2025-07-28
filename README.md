@@ -72,6 +72,7 @@ This runs all test cases using **Vitest** and **React Testing Library**.
 ## 🗃️ Folder Structure
 
 src/
+
 -> components/    # Reusable UI components (modals, product cards, etc.)
 
 -> context/       # Global ProductContext with reducer
