@@ -1,6 +1,6 @@
 # 🛍️ React E-Commerce Product Dashboard
 
-This is a fully functional E-Commerce Product Dashboard built with **React**, designed for managing a product inventory. It allows users to **Add**, **Edit**, **Delete**, **Search**, **Filter**, and **Undo** product actions, with data persistence using localStorage.
+This is a fully functional E-Commerce Product Dashboard built with **React**, designed for managing a product inventory. It allows users to **Add**, **Edit**, **Delete**, **Search**, **Filter**, and **Undo** product actions, with data persistence using local storage.
 
 ---
 
