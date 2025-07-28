@@ -72,13 +72,13 @@ This runs all test cases using **Vitest** and **React Testing Library**.
 ## 🗃️ Folder Structure
 
 src/
-├── components/ # Reusable UI components (modals, product cards, etc.)
-├── context/ # Global ProductContext with reducer
-├── hooks/ # Custom hooks (useProducts, useFilters, etc.)
-├── pages/ # Page layout or main dashboard
-├── utils/ # Utilities and validation logic
-├── App.jsx # Main app component
-└── main.jsx # Entry point
+-> components/    # Reusable UI components (modals, product cards, etc.)
+-> context/       # Global ProductContext with reducer
+-> hooks/         # Custom hooks (useProducts, useFilters, etc.)
+-> pages/         # Page layout or main dashboard
+-> utils/         # Utilities and validation logic
+-> App.jsx        # Main app component
+-> main.jsx       # Entry point
 
 ---
 
